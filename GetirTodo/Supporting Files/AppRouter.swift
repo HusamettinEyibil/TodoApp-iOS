@@ -11,7 +11,7 @@ import UIKit
 class AppRouter {
     func start(scene: UIWindowScene) -> UIWindow {
         let window = UIWindow(frame: UIScreen.main.bounds)
-        let navigationController = UINavigationController(rootViewController: ViewController())
+        let navigationController = UINavigationController(rootViewController: TodoListViewController())
         window.rootViewController = navigationController
         window.makeKeyAndVisible()
         window.windowScene = scene
