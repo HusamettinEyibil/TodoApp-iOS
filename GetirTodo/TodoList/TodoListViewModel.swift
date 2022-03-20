@@ -15,7 +15,7 @@ enum TodoListViewModelOutput {
     case showItemList([TodoListPresentation])
 }
 
-class TodoListViewModel {
+class TodoListViewModel: TodoListViewModelProtocol {
     weak var delegate: TodoListViewModelDelegate?
     
     private let manager: CoreDataProtocol!
