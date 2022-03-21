@@ -6,6 +6,10 @@
 //
 
 import UIKit
+protocol TodoDetailViewModelProtocol {
+    var delegate: TodoDetailViewModelDelegate? { get set }
+    func viewDidLoad()
+}
 
 class TodoDetailViewController: UIViewController {
     
@@ -37,6 +41,12 @@ class TodoDetailViewController: UIViewController {
         button.backgroundColor = .systemBlue
         return button
     }()
+    
+    var viewModel: TodoDetailViewModelProtocol! {
+        didSet {
+            viewModel.delegate = self
+        }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -57,4 +67,12 @@ class TodoDetailViewController: UIViewController {
         saveButton.frame = CGRect(x: 15, y: detailTextView.bottom + 10, width: layoutFrame.width - 30, height: 50)
     }
 
+}
+
+extension TodoDetailViewController: TodoDetailViewModelDelegate {
+    func showDetail(item: TodoItem) {
+        titleTextField.text = item.title
+        detailTextView.text = item.detail
+        saveButton.isHidden = true
+    }
 }
