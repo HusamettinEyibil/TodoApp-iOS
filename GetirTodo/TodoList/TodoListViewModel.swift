@@ -9,6 +9,7 @@ import Foundation
 
 protocol TodoListViewModelDelegate: NSObject {
     func didFetchItems(_ output: TodoListViewModelOutput)
+    func navigate(to route: TodoListViewRoute)
 }
 
 enum TodoListViewModelOutput {
@@ -30,6 +31,14 @@ class TodoListViewModel: TodoListViewModelProtocol {
     }
     
     private func fetchItems() {
+//        manager.createNewItem(item: TodoItem(id: UUID(), title: "Husam", detail: "Naber", startDate: Date(), endDate: Date())) { result in
+//            switch result {
+//            case .success(_):
+//                break
+//            case .failure(_):
+//                break
+//            }
+//        }
         manager.getAllItems { [weak self] result in
             guard let self = self else { return }
             switch result {
@@ -42,5 +51,10 @@ class TodoListViewModel: TodoListViewModelProtocol {
                 debugPrint(error.localizedDescription)
             }
         }
+    }
+    
+    func didSelectRow(at indexPath: IndexPath) {
+        let item = items[indexPath.row]
+        self.delegate?.navigate(to: .showDetail(item: item))
     }
 }

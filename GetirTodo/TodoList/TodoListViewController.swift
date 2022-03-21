@@ -10,6 +10,11 @@ import UIKit
 protocol TodoListViewModelProtocol {
     var delegate: TodoListViewModelDelegate? { get set }
     func viewDidLoad()
+    func didSelectRow(at indexPath: IndexPath)
+}
+
+enum TodoListViewRoute {
+    case showDetail(item: TodoItem)
 }
 
 class TodoListViewController: UIViewController {
@@ -66,6 +71,11 @@ extension TodoListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 70
     }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        viewModel.didSelectRow(at: indexPath)
+    }
 }
 
 extension TodoListViewController: TodoListViewModelDelegate {
@@ -76,6 +86,14 @@ extension TodoListViewController: TodoListViewModelDelegate {
             DispatchQueue.main.async {
                 self.tableView.reloadData()
             }
+        }
+    }
+    
+    func navigate(to route: TodoListViewRoute) {
+        switch route {
+        case .showDetail(let item):
+            let viewController = TodoDetailBuilder.build(item: item)
+            self.navigationController?.pushViewController(viewController, animated: true)
         }
     }
 }

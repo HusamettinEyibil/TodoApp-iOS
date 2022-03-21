@@ -53,6 +53,7 @@ class TodoDetailViewController: UIViewController {
         title = "Detail"
         navigationController?.navigationBar.titleTextAttributes = [.font: UIFont.systemFont(ofSize: 18, weight: .semibold)]
         view.backgroundColor = .systemGray5
+        viewModel.viewDidLoad()
     }
     
     override func viewDidLayoutSubviews() {
