@@ -31,14 +31,14 @@ class TodoListViewModel: TodoListViewModelProtocol {
     }
     
     private func fetchItems() {
-//        manager.createNewItem(item: TodoItem(id: UUID(), title: "Husam", detail: "Naber", startDate: Date(), endDate: Date())) { result in
-//            switch result {
-//            case .success(_):
-//                break
-//            case .failure(_):
-//                break
-//            }
-//        }
+        manager.createNewItem(item: TodoItem(id: UUID(), title: "Husam", detail: "Naber", startDate: Date(), endDate: Date())) { result in
+            switch result {
+            case .success(_):
+                break
+            case .failure(_):
+                break
+            }
+        }
         manager.getAllItems { [weak self] result in
             guard let self = self else { return }
             switch result {
@@ -56,5 +56,10 @@ class TodoListViewModel: TodoListViewModelProtocol {
     func didSelectRow(at indexPath: IndexPath) {
         let item = items[indexPath.row]
         self.delegate?.navigate(to: .showDetail(item: item))
+    }
+    
+    func didTapAddButton() {
+        let emptyItem = TodoItem(id: UUID(), title: "", detail: "", startDate: Date(), endDate: Date())
+        self.delegate?.navigate(to: .addNewItem(item: emptyItem))
     }
 }

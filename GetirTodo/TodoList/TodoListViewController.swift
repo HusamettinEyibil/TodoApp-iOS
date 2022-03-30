@@ -11,10 +11,12 @@ protocol TodoListViewModelProtocol {
     var delegate: TodoListViewModelDelegate? { get set }
     func viewDidLoad()
     func didSelectRow(at indexPath: IndexPath)
+    func didTapAddButton()
 }
 
 enum TodoListViewRoute {
     case showDetail(item: TodoItem)
+    case addNewItem(item: TodoItem)
 }
 
 class TodoListViewController: UIViewController {
@@ -35,6 +37,7 @@ class TodoListViewController: UIViewController {
         view.backgroundColor = .systemGray6
         viewModel.viewDidLoad()
         configureTableView()
+        configureAddButton()
     }
     
     override func viewDidLayoutSubviews() {
@@ -53,6 +56,15 @@ class TodoListViewController: UIViewController {
         tableView.rowHeight = UITableView.automaticDimension
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         view.addSubview(tableView)
+    }
+    
+    private func configureAddButton() {
+        let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapAddButton))
+        navigationItem.rightBarButtonItem = addButton
+    }
+    
+    @objc private func didTapAddButton() {
+        viewModel.didTapAddButton()
     }
 
 }
@@ -92,6 +104,9 @@ extension TodoListViewController: TodoListViewModelDelegate {
     func navigate(to route: TodoListViewRoute) {
         switch route {
         case .showDetail(let item):
+            let viewController = TodoDetailBuilder.build(item: item)
+            self.navigationController?.pushViewController(viewController, animated: true)
+        case .addNewItem(let item):
             let viewController = TodoDetailBuilder.build(item: item)
             self.navigationController?.pushViewController(viewController, animated: true)
         }
