@@ -31,7 +31,7 @@ class TodoListViewModel: TodoListViewModelProtocol {
     }
     
     private func fetchItems() {
-        manager.createNewItem(item: TodoItem(id: UUID(), title: "Husam", detail: "Naber", startDate: Date(), endDate: Date())) { result in
+        manager.createNewItem(item: TodoItem(title: "Husam", detail: "Naber")) { result in
             switch result {
             case .success(_):
                 break
@@ -59,7 +59,7 @@ class TodoListViewModel: TodoListViewModelProtocol {
     }
     
     func didTapAddButton() {
-        let emptyItem = TodoItem(id: UUID(), title: "", detail: "", startDate: Date(), endDate: Date())
+        let emptyItem = TodoItem(title: "", detail: "")
         self.delegate?.navigate(to: .addNewItem(item: emptyItem))
     }
 }

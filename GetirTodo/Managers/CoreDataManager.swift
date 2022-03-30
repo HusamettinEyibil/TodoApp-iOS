@@ -41,11 +41,8 @@ class CoreDataManager: CoreDataProtocol {
         
         let newItem = NSManagedObject(entity: entity, insertInto: context)
         
-        newItem.setValue(item.id, forKey: "id")
         newItem.setValue(item.title, forKey: "title")
         newItem.setValue(item.detail, forKey: "detail")
-        newItem.setValue(item.startDate, forKey: "startDate")
-        newItem.setValue(item.endDate, forKey: "endDate")
         
         result(.success(true))
     }
@@ -54,13 +51,10 @@ class CoreDataManager: CoreDataProtocol {
     
     //MARK: - Private
     private func createItemFromNSManagedObject(object: NSManagedObject) -> TodoItem {
-        let id = object.value(forKey: "id") as! UUID
         let title = object.value(forKey: "title") as! String
         let detail = object.value(forKey: "detail") as? String
-        let startDate = object.value(forKey: "startDate") as! Date
-        let endDate = object.value(forKey: "endDate") as! Date
         
-        return TodoItem(id: id, title: title, detail: detail, startDate: startDate, endDate: endDate)
+        return TodoItem(title: title, detail: detail)
     }
     
     private lazy var persistentContainer: NSPersistentContainer = {
