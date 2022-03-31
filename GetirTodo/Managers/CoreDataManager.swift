@@ -67,6 +67,21 @@ class CoreDataManager: CoreDataProtocol {
         }
     }
     
+    func deleteItem(itemId: UUID, result: @escaping (Result<Bool, CoreDataError>) -> Void) {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TodoListItem")
+        fetchRequest.predicate = NSPredicate(format: "itemId==\(itemId)")
+        do {
+            let objects = try context.fetch(fetchRequest)
+            for object in objects {
+                context.delete(object as! NSManagedObject)
+            }
+            saveContext()
+            result(.success(true))
+        } catch {
+            result(.failure(.failedToDelete))
+        }
+    }
+    
     
     
     //MARK: - Private
