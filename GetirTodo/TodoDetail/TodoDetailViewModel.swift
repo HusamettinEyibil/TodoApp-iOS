@@ -49,4 +49,15 @@ class TodoDetailViewModel: TodoDetailViewModelProtocol {
             }
         }
     }
+    
+    func deleteItem(itemId: UUID) {
+        manager.deleteItem(itemId: itemId) { result in
+            switch result {
+            case .success(_):
+                break
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+        }
+    }
 }

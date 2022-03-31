@@ -12,6 +12,7 @@ protocol TodoListViewModelProtocol {
     func viewDidLoad()
     func didSelectRow(at indexPath: IndexPath)
     func didTapPlusButton()
+    func deleteItem(itemId: UUID)
 }
 
 enum TodoListViewRoute {
@@ -92,6 +93,15 @@ extension TodoListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         viewModel.didSelectRow(at: indexPath)
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            let item = items[indexPath.row]
+            viewModel.deleteItem(itemId: item.itemId)
+            items.remove(at: indexPath.row)
+            tableView.reloadData()
+        }
     }
 }
 
