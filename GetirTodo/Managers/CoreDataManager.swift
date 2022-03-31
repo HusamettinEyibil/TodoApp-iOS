@@ -11,6 +11,7 @@ import CoreData
 protocol CoreDataProtocol {
     func getAllItems(result: @escaping (Result<[TodoItem], CoreDataError>) -> Void)
     func createNewItem(item: TodoItem, result: @escaping (Result<Bool, CoreDataError>) -> Void)
+    func updateItem(item: TodoItem, result: @escaping (Result<Bool, CoreDataError>) -> Void)
 }
 
 class CoreDataManager: CoreDataProtocol {

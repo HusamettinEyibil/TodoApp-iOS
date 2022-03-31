@@ -31,12 +31,22 @@ class TodoDetailViewModel: TodoDetailViewModelProtocol {
         manager.createNewItem(item: item) { result in
             switch result {
             case .success(_):
-                print("success olm")
                 break
             case .failure(let error):
                 print(error.localizedDescription)
             }
         }
         delegate?.didCreateNewItem()
+    }
+    
+    func didTapSaveButton(item: TodoItem) {
+        manager.updateItem(item: item) { result in
+            switch result {
+            case .success(_):
+                break
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+        }
     }
 }

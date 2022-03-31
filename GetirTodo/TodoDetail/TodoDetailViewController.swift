@@ -10,6 +10,7 @@ protocol TodoDetailViewModelProtocol {
     var delegate: TodoDetailViewModelDelegate? { get set }
     func viewDidLoad()
     func didTapAddButton(item: TodoItem)
+    func didTapSaveButton(item: TodoItem)
 }
 
 class TodoDetailViewController: UIViewController {
@@ -20,6 +21,8 @@ class TodoDetailViewController: UIViewController {
         textField.layer.masksToBounds = true
         textField.font = UIFont.systemFont(ofSize: 18)
         textField.backgroundColor = .systemBackground
+        textField.autocorrectionType = .no
+        textField.autocapitalizationType = .none
         return textField
     }()
     
@@ -30,6 +33,8 @@ class TodoDetailViewController: UIViewController {
         textView.font = UIFont.systemFont(ofSize: 18)
         textView.contentInset = UIEdgeInsets(top: 8, left: 10, bottom: 8, right: 15)
         textView.backgroundColor = .systemBackground
+        textView.autocorrectionType = .no
+        textView.autocapitalizationType = .none
         return textView
     }()
     
@@ -44,6 +49,8 @@ class TodoDetailViewController: UIViewController {
         return button
     }()
     
+    var itemId: UUID?
+    
     var viewModel: TodoDetailViewModelProtocol! {
         didSet {
             viewModel.delegate = self
@@ -55,6 +62,7 @@ class TodoDetailViewController: UIViewController {
         navigationController?.navigationBar.titleTextAttributes = [.font: UIFont.systemFont(ofSize: 18, weight: .semibold)]
         view.backgroundColor = .systemGray5
         viewModel.viewDidLoad()
+        configureEditButton()
     }
     
     override func viewDidLayoutSubviews() {
@@ -72,21 +80,41 @@ class TodoDetailViewController: UIViewController {
     
     @objc private func didTapButton() {
         guard let buttonText = button.titleLabel?.text else {return}
+        let title = titleTextField.text ?? ""
+        let detail = detailTextView.text ?? ""
+        
         switch buttonText {
         case "Add":
-            let title = titleTextField.text ?? ""
-            let detail = detailTextView.text ?? ""
             let newItem = TodoItem(itemId: UUID(), title: title, detail: detail)
             viewModel.didTapAddButton(item: newItem)
+        case "Save":
+            titleTextField.isEnabled = false
+            detailTextView.isEditable = false
+            button.isHidden = true
+            
+            let item = TodoItem(itemId: itemId, title: title, detail: detail)
+            viewModel.didTapSaveButton(item: item)
         default:
             break
         }
+    }
+    
+    private func configureEditButton() {
+        let editButton = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(didTapEditButton))
+        navigationItem.rightBarButtonItem = editButton
+    }
+    
+    @objc private func didTapEditButton() {
+        titleTextField.isEnabled = true
+        detailTextView.isEditable = true
+        button.isHidden = false
     }
 
 }
 
 extension TodoDetailViewController: TodoDetailViewModelDelegate {
     func showDetail(item: TodoItem) {
+        itemId = item.itemId
         titleTextField.text = item.title
         detailTextView.text = item.detail
     }

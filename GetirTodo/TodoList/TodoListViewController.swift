@@ -112,6 +112,8 @@ extension TodoListViewController: TodoListViewModelDelegate {
             let viewController = TodoDetailBuilder.build(item: item)
             viewController.title = "Detail"
             viewController.button.isHidden = true
+            viewController.titleTextField.isEnabled = false
+            viewController.detailTextView.isEditable = false
             self.navigationController?.pushViewController(viewController, animated: true)
         case .addNewItem(let item):
             let viewController = TodoDetailBuilder.build(item: item)
