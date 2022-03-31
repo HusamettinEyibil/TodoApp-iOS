@@ -36,6 +36,7 @@ class TodoListViewController: UIViewController {
         super.viewDidLoad()
         
         view.backgroundColor = .systemGray6
+        title = "Tasks"
         viewModel.viewDidLoad()
         configureTableView()
         configureAddButton()
@@ -58,9 +59,10 @@ class TodoListViewController: UIViewController {
         tableView.dataSource = self
         tableView.showsVerticalScrollIndicator = false
         tableView.backgroundColor = .systemBackground
+        tableView.separatorStyle = .none
         tableView.estimatedRowHeight = tableView.rowHeight
         tableView.rowHeight = UITableView.automaticDimension
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        tableView.register(TodoListTableViewCell.self, forCellReuseIdentifier: TodoListTableViewCell.identifier)
         view.addSubview(tableView)
     }
     
@@ -81,13 +83,17 @@ extension TodoListViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        cell.textLabel?.text = items[indexPath.row].title
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: TodoListTableViewCell.identifier,
+                                                       for: indexPath) as? TodoListTableViewCell else {
+            return UITableViewCell()
+        }
+        cell.configure(with: items[indexPath.row].title)
+        cell.selectionStyle = .none
         return cell
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 70
+        return 75
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
