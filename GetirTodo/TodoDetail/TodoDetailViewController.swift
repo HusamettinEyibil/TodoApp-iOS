@@ -49,6 +49,8 @@ class TodoDetailViewController: UIViewController {
         return button
     }()
     
+    var editButton: UIBarButtonItem?
+    
     var itemId: UUID?
     
     var viewModel: TodoDetailViewModelProtocol! {
@@ -91,6 +93,7 @@ class TodoDetailViewController: UIViewController {
             titleTextField.isEnabled = false
             detailTextView.isEditable = false
             button.isHidden = true
+            editButton?.isEnabled = true
             
             let item = TodoItem(itemId: itemId, title: title, detail: detail)
             viewModel.didTapSaveButton(item: item)
@@ -100,7 +103,7 @@ class TodoDetailViewController: UIViewController {
     }
     
     private func configureEditButton() {
-        let editButton = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(didTapEditButton))
+        editButton = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(didTapEditButton))
         navigationItem.rightBarButtonItem = editButton
     }
     
@@ -108,6 +111,7 @@ class TodoDetailViewController: UIViewController {
         titleTextField.isEnabled = true
         detailTextView.isEditable = true
         button.isHidden = false
+        editButton?.isEnabled = false
     }
 
 }

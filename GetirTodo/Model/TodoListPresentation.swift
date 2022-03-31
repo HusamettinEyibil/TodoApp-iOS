@@ -8,5 +8,6 @@
 import Foundation
 
 struct TodoListPresentation {
+    let itemId: UUID
     let title: String
 }

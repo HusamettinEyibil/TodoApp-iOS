@@ -12,6 +12,7 @@ protocol CoreDataProtocol {
     func getAllItems(result: @escaping (Result<[TodoItem], CoreDataError>) -> Void)
     func createNewItem(item: TodoItem, result: @escaping (Result<Bool, CoreDataError>) -> Void)
     func updateItem(item: TodoItem, result: @escaping (Result<Bool, CoreDataError>) -> Void)
+    func deleteItem(itemId: UUID, result: @escaping (Result<Bool, CoreDataError>) -> Void)
 }
 
 class CoreDataManager: CoreDataProtocol {
@@ -69,12 +70,12 @@ class CoreDataManager: CoreDataProtocol {
     
     func deleteItem(itemId: UUID, result: @escaping (Result<Bool, CoreDataError>) -> Void) {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TodoListItem")
-        fetchRequest.predicate = NSPredicate(format: "itemId==\(itemId)")
         do {
-            let objects = try context.fetch(fetchRequest)
-            for object in objects {
-                context.delete(object as! NSManagedObject)
-            }
+            let results = try context.fetch(fetchRequest)
+            let itemToDelete = results.filter { result in
+                return ((result as! NSManagedObject).value(forKey: "itemId") as! UUID) == itemId
+            }.first as! NSManagedObject
+            context.delete(itemToDelete)
             saveContext()
             result(.success(true))
         } catch {
