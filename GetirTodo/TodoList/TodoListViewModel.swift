@@ -9,6 +9,7 @@ import Foundation
 
 protocol TodoListViewModelDelegate: NSObject {
     func didFetchItems(_ output: TodoListViewModelOutput)
+    func navigate(to route: TodoListViewRoute)
 }
 
 enum TodoListViewModelOutput {
@@ -42,5 +43,15 @@ class TodoListViewModel: TodoListViewModelProtocol {
                 debugPrint(error.localizedDescription)
             }
         }
+    }
+    
+    func didSelectRow(at indexPath: IndexPath) {
+        let item = items[indexPath.row]
+        self.delegate?.navigate(to: .showDetail(item: item))
+    }
+    
+    func didTapPlusButton() {
+        let emptyItem = TodoItem(itemId: nil, title: "", detail: "")
+        self.delegate?.navigate(to: .addNewItem(item: emptyItem))
     }
 }

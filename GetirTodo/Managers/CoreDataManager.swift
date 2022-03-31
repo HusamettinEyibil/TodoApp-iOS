@@ -11,6 +11,7 @@ import CoreData
 protocol CoreDataProtocol {
     func getAllItems(result: @escaping (Result<[TodoItem], CoreDataError>) -> Void)
     func createNewItem(item: TodoItem, result: @escaping (Result<Bool, CoreDataError>) -> Void)
+    func updateItem(item: TodoItem, result: @escaping (Result<Bool, CoreDataError>) -> Void)
 }
 
 class CoreDataManager: CoreDataProtocol {
@@ -41,26 +42,40 @@ class CoreDataManager: CoreDataProtocol {
         
         let newItem = NSManagedObject(entity: entity, insertInto: context)
         
-        newItem.setValue(item.id, forKey: "id")
+        newItem.setValue(item.itemId!, forKey: "itemId")
         newItem.setValue(item.title, forKey: "title")
         newItem.setValue(item.detail, forKey: "detail")
-        newItem.setValue(item.startDate, forKey: "startDate")
-        newItem.setValue(item.endDate, forKey: "endDate")
-        
+        saveContext()
         result(.success(true))
+    }
+    
+    func updateItem(item: TodoItem, result: @escaping (Result<Bool, CoreDataError>) -> Void) {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TodoListItem")
+        do{
+            let results = try context.fetch(fetchRequest)
+            let itemToUpdate = results.filter { result in
+                guard let id = item.itemId else {return false}
+                return ((result as! NSManagedObject).value(forKey: "itemId") as! UUID) == id
+            }.first as! NSManagedObject
+            
+            itemToUpdate.setValue(item.title, forKey: "title")
+            itemToUpdate.setValue(item.detail, forKey: "detail")
+            saveContext()
+            result(.success(true))
+        } catch {
+            result(.failure(.failedToUpdateData))
+        }
     }
     
     
     
     //MARK: - Private
     private func createItemFromNSManagedObject(object: NSManagedObject) -> TodoItem {
-        let id = object.value(forKey: "id") as! UUID
+        let itemId = object.value(forKey: "itemId") as! UUID
         let title = object.value(forKey: "title") as! String
-        let detail = object.value(forKey: "detail") as? String
-        let startDate = object.value(forKey: "startDate") as! Date
-        let endDate = object.value(forKey: "endDate") as! Date
+        let detail = object.value(forKey: "detail") as! String
         
-        return TodoItem(id: id, title: title, detail: detail, startDate: startDate, endDate: endDate)
+        return TodoItem(itemId: itemId, title: title, detail: detail)
     }
     
     private lazy var persistentContainer: NSPersistentContainer = {
