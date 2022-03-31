@@ -11,6 +11,7 @@ protocol TodoDetailViewModelProtocol {
     func viewDidLoad()
     func didTapAddButton(item: TodoItem)
     func didTapSaveButton(item: TodoItem)
+    func deleteItem(itemId: UUID)
 }
 
 class TodoDetailViewController: UIViewController {
@@ -50,6 +51,7 @@ class TodoDetailViewController: UIViewController {
     }()
     
     var editButton: UIBarButtonItem?
+    var deleteButton: UIBarButtonItem?
     
     var itemId: UUID?
     
@@ -65,6 +67,7 @@ class TodoDetailViewController: UIViewController {
         view.backgroundColor = .systemGray5
         viewModel.viewDidLoad()
         configureEditButton()
+        configureDeleteButton()
     }
     
     override func viewDidLayoutSubviews() {
@@ -104,7 +107,9 @@ class TodoDetailViewController: UIViewController {
     
     private func configureEditButton() {
         editButton = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(didTapEditButton))
-        navigationItem.rightBarButtonItem = editButton
+        guard let editButton = editButton else {return}
+        navigationItem.rightBarButtonItems = []
+        navigationItem.rightBarButtonItems?.append(editButton)
     }
     
     @objc private func didTapEditButton() {
@@ -112,6 +117,23 @@ class TodoDetailViewController: UIViewController {
         detailTextView.isEditable = true
         button.isHidden = false
         editButton?.isEnabled = false
+    }
+    
+    private func configureDeleteButton() {
+        deleteButton = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: #selector(didTapDeleteButton))
+        guard let deleteButton = deleteButton else {return}
+        navigationItem.rightBarButtonItems?.append(deleteButton)
+    }
+    
+    @objc private func didTapDeleteButton() {
+        guard let id = itemId else {return}
+        viewModel.deleteItem(itemId: id)
+        
+        let alert = UIAlertController(title: "Success", message: "Item deleted successfully", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Go to List Screen", style: .default, handler: { _ in
+            self.navigationController?.popViewController(animated: true)
+        }))
+        present(alert, animated: true)
     }
 
 }
