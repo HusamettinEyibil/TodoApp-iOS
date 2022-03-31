@@ -41,20 +41,40 @@ class CoreDataManager: CoreDataProtocol {
         
         let newItem = NSManagedObject(entity: entity, insertInto: context)
         
+        newItem.setValue(item.itemId!, forKey: "itemId")
         newItem.setValue(item.title, forKey: "title")
         newItem.setValue(item.detail, forKey: "detail")
-        
+        saveContext()
         result(.success(true))
+    }
+    
+    func updateItem(item: TodoItem, result: @escaping (Result<Bool, CoreDataError>) -> Void) {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TodoListItem")
+        do{
+            let results = try context.fetch(fetchRequest)
+            let itemToUpdate = results.filter { result in
+                guard let id = item.itemId else {return false}
+                return ((result as! NSManagedObject).value(forKey: "itemId") as! UUID) == id
+            }.first as! NSManagedObject
+            
+            itemToUpdate.setValue(item.title, forKey: "title")
+            itemToUpdate.setValue(item.detail, forKey: "detail")
+            saveContext()
+            result(.success(true))
+        } catch {
+            result(.failure(.failedToUpdateData))
+        }
     }
     
     
     
     //MARK: - Private
     private func createItemFromNSManagedObject(object: NSManagedObject) -> TodoItem {
+        let itemId = object.value(forKey: "itemId") as! UUID
         let title = object.value(forKey: "title") as! String
-        let detail = object.value(forKey: "detail") as? String
+        let detail = object.value(forKey: "detail") as! String
         
-        return TodoItem(title: title, detail: detail)
+        return TodoItem(itemId: itemId, title: title, detail: detail)
     }
     
     private lazy var persistentContainer: NSPersistentContainer = {

@@ -8,6 +8,7 @@
 import Foundation
 
 struct TodoItem {
+    var itemId: UUID?
     var title: String
-    var detail: String?
+    var detail: String
 }

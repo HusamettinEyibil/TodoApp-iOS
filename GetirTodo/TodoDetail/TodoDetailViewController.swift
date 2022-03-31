@@ -9,6 +9,7 @@ import UIKit
 protocol TodoDetailViewModelProtocol {
     var delegate: TodoDetailViewModelDelegate? { get set }
     func viewDidLoad()
+    func didTapAddButton(item: TodoItem)
 }
 
 class TodoDetailViewController: UIViewController {
@@ -32,13 +33,14 @@ class TodoDetailViewController: UIViewController {
         return textView
     }()
     
-    let saveButton: UIButton = {
+    let button: UIButton = {
         let button = UIButton()
         button.layer.cornerRadius = 5
         button.layer.masksToBounds = true
         button.setTitle("Save", for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 20, weight: .bold)
         button.backgroundColor = .systemBlue
+        button.addTarget(self, action: #selector(didTapButton), for: .touchUpInside)
         return button
     }()
     
@@ -50,7 +52,6 @@ class TodoDetailViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Detail"
         navigationController?.navigationBar.titleTextAttributes = [.font: UIFont.systemFont(ofSize: 18, weight: .semibold)]
         view.backgroundColor = .systemGray5
         viewModel.viewDidLoad()
@@ -64,8 +65,22 @@ class TodoDetailViewController: UIViewController {
         titleTextField.frame = CGRect(x: 15, y: view.safeAreaInsets.top + 10, width: layoutFrame.width - 30, height: 50)
         view.addSubview(detailTextView)
         detailTextView.frame = CGRect(x: 15, y: titleTextField.bottom + 10, width: layoutFrame.width - 30, height: 250)
-        view.addSubview(saveButton)
-        saveButton.frame = CGRect(x: 15, y: detailTextView.bottom + 10, width: layoutFrame.width - 30, height: 50)
+        view.addSubview(button)
+        button.frame = CGRect(x: 15, y: detailTextView.bottom + 20, width: layoutFrame.width / 1.5, height: 50)
+        button.center.x = view.center.x
+    }
+    
+    @objc private func didTapButton() {
+        guard let buttonText = button.titleLabel?.text else {return}
+        switch buttonText {
+        case "Add":
+            let title = titleTextField.text ?? ""
+            let detail = detailTextView.text ?? ""
+            let newItem = TodoItem(itemId: UUID(), title: title, detail: detail)
+            viewModel.didTapAddButton(item: newItem)
+        default:
+            break
+        }
     }
 
 }
@@ -74,6 +89,13 @@ extension TodoDetailViewController: TodoDetailViewModelDelegate {
     func showDetail(item: TodoItem) {
         titleTextField.text = item.title
         detailTextView.text = item.detail
-        saveButton.isHidden = true
+    }
+    
+    func didCreateNewItem() {
+        let alert = UIAlertController(title: "Success", message: "New item is successfully created.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
+            self.navigationController?.popViewController(animated: true)
+        }))
+        present(alert, animated: true)
     }
 }

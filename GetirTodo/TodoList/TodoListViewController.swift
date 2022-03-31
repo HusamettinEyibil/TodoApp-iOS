@@ -11,7 +11,7 @@ protocol TodoListViewModelProtocol {
     var delegate: TodoListViewModelDelegate? { get set }
     func viewDidLoad()
     func didSelectRow(at indexPath: IndexPath)
-    func didTapAddButton()
+    func didTapPlusButton()
 }
 
 enum TodoListViewRoute {
@@ -46,6 +46,11 @@ class TodoListViewController: UIViewController {
         tableView.frame = view.safeAreaLayoutGuide.layoutFrame
         tableView.reloadData()
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        viewModel.viewDidLoad()
+    }
 
     private func configureTableView() {
         tableView.delegate = self
@@ -59,12 +64,12 @@ class TodoListViewController: UIViewController {
     }
     
     private func configureAddButton() {
-        let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapAddButton))
+        let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapPlusButton))
         navigationItem.rightBarButtonItem = addButton
     }
     
-    @objc private func didTapAddButton() {
-        viewModel.didTapAddButton()
+    @objc private func didTapPlusButton() {
+        viewModel.didTapPlusButton()
     }
 
 }
@@ -105,9 +110,14 @@ extension TodoListViewController: TodoListViewModelDelegate {
         switch route {
         case .showDetail(let item):
             let viewController = TodoDetailBuilder.build(item: item)
+            viewController.title = "Detail"
+            viewController.button.isHidden = true
             self.navigationController?.pushViewController(viewController, animated: true)
         case .addNewItem(let item):
             let viewController = TodoDetailBuilder.build(item: item)
+            viewController.title = "Add New Item"
+            viewController.button.setTitle("Add", for: .normal)
+            viewController.button.isHidden = false
             self.navigationController?.pushViewController(viewController, animated: true)
         }
     }
