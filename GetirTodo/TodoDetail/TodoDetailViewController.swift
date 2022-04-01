@@ -160,7 +160,8 @@ extension TodoDetailViewController: TodoDetailViewModelDelegate {
         showAlert(title: "Success",
                   message: "New item is successfully created.",
                   actionTitle: "OK",
-                  target: self) { _ in
+                  target: self) { [weak self] _ in
+            guard let self = self else {return}
             self.navigationController?.popViewController(animated: true)
         }
     }
