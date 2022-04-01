@@ -25,29 +25,29 @@ This is an example app written by Hüsamettin Eyibil on 01.04.2022<br>
   <tr>
     <td>
         **Main** <br>
-        <img src="/screenshots/main.png">
+        <img src="/screenshots/main.gif">
     </td>
     <td>
         **Add New Item** <br>
-        <img src="/screenshots/add.png">
+        <img src="/screenshots/add.gif">
     </td>
     <td>
         **Edit Item** <br>
-        <img src="/screenshots/edit.png">
+        <img src="/screenshots/edit.gif">
     </td>
   </tr>
     <tr>
     <td>
         **Delete Item with Button** <br>
-        <img src="/screenshots/delete1.png">
+        <img src="/screenshots/delete1.gif">
     </td>
     <td>
         **Swipe to Delete** <br>
-        <img src="/screenshots/delete2.png">
+        <img src="/screenshots/delete2.gif">
     </td>
     <td>
         **Dark Mode** <br>
-        <img src="/screenshots/dark.png">
+        <img src="/screenshots/dark.gif">
     </td>
   </tr>
 </table>
