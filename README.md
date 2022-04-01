@@ -1,31 +1,53 @@
-# GetirTodo
+# TodoApp-iOS
+Example Todo App written in Swift.
 
-## Project:
+<h3>Overview</h3>
+This is an example app written by Hüsamettin Eyibil on 01.04.2022<br>
+<ul>
+    <li>MVVM Design Pattern used.</li>
+    <li>CoreData used for persistent local storage.</li>
+    <li>SwiftLint used to enforce Swift style and conventions.</li>
+    <li>Programmatical design preferred.</li>
+    <li>Without any third party framework.</li>
+</ul>
 
-We would like you to build a simple "to-do" app which consists of tasks in list and task detail in detail screen.
+<h3>About TodoApp</h3>
+<ul>
+    <li>List screen displaying a list of task titles.</li>
+    <li>Detail screen for task details.</li>
+    <li>Add new task and update task feature.</li>
+    <li>Delete from both screen (swipe to delete & delete with button).</li>
+    <li>Supports dark mode.</li>
+</ul>
 
-### Requirements:
-
-* A task should consist of a title and details
-* Tasks' titles should be shown in a list
-* Tasks can be deleted in listing screen
-* To see the detail of a task, a user should be able to navigate to detail screen
-* A user should be able to save, delete and update a task in detail screen
-
-### Technical Requirements:
-
-* Feel free to use any architecture or design pattern
-* Do not use any reactive paradigm (SwiftUI, RxSwift etc.) 
-* You can build the user interface with XIBs or Storyboards
-* Do not try to build a fancy UI
-* Keep code as clean as possible
-* For the local storage, you should use Realm or CoreData
-* Git usage will be evaluated
-* A README.md which shortly describes technical details/decisions
-* We do not expect to see any UI or unit tests
-* There should not be any necessity to use a third party framework (other than Realm, if you chose it)
-
-### Submission:
-
-After completing the assignment, create a pull request to `main` branch.
-Then please send an email to the People Department with the link of the GitHub repo.
+<h3>Screenshots</h3>
+<table>
+  <tr>
+    <td>
+        **Main** <br>
+        <img src="/screenshots/main.png">
+    </td>
+    <td>
+        **Add New Item** <br>
+        <img src="/screenshots/add.png">
+    </td>
+    <td>
+        **Edit Item** <br>
+        <img src="/screenshots/edit.png">
+    </td>
+  </tr>
+    <tr>
+    <td>
+        **Delete Item with Button** <br>
+        <img src="/screenshots/delete1.png">
+    </td>
+    <td>
+        **Swipe to Delete** <br>
+        <img src="/screenshots/delete2.png">
+    </td>
+    <td>
+        **Dark Mode** <br>
+        <img src="/screenshots/dark.png">
+    </td>
+  </tr>
+</table>
