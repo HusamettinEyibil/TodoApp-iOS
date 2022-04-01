@@ -24,6 +24,7 @@ class TodoDetailViewController: UIViewController {
         textField.backgroundColor = .systemBackground
         textField.autocorrectionType = .no
         textField.autocapitalizationType = .none
+        textField.placeholder = "Title of the task"
         return textField
     }()
 
