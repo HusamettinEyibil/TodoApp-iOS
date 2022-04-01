@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol TodoListViewModelDelegate: NSObject {
+protocol TodoListViewModelDelegate: AnyObject {
     func didFetchItems(_ output: TodoListViewModelOutput)
     func navigate(to route: TodoListViewRoute)
 }
@@ -18,18 +18,18 @@ enum TodoListViewModelOutput {
 
 class TodoListViewModel: TodoListViewModelProtocol {
     weak var delegate: TodoListViewModelDelegate?
-    
+
     private let manager: CoreDataProtocol!
     private var items = [TodoItem]()
-    
+
     init(manager: CoreDataProtocol) {
         self.manager = manager
     }
-    
+
     func viewDidLoad() {
         fetchItems()
     }
-    
+
     private func fetchItems() {
         manager.getAllItems { [weak self] result in
             guard let self = self else { return }
@@ -44,24 +44,24 @@ class TodoListViewModel: TodoListViewModelProtocol {
             }
         }
     }
-    
+
     func didSelectRow(at indexPath: IndexPath) {
         let item = items[indexPath.row]
         self.delegate?.navigate(to: .showDetail(item: item))
     }
-    
+
     func didTapPlusButton() {
         let emptyItem = TodoItem(itemId: nil, title: "", detail: "")
         self.delegate?.navigate(to: .addNewItem(item: emptyItem))
     }
-    
+
     func deleteItem(itemId: UUID) {
         manager.deleteItem(itemId: itemId) { result in
             switch result {
-            case .success(_):
-                break
+            case .success(let success):
+                debugPrint(success ? "success" : "failure")
             case .failure(let error):
-                print(error.localizedDescription)
+                debugPrint(error.localizedDescription)
             }
         }
     }
