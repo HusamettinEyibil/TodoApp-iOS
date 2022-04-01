@@ -57,7 +57,7 @@ class TodoListViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         tableView.showsVerticalScrollIndicator = false
-        tableView.backgroundColor = .systemBackground
+        tableView.backgroundColor = .tertiarySystemBackground
         tableView.separatorStyle = .none
         tableView.estimatedRowHeight = tableView.rowHeight
         tableView.rowHeight = UITableView.automaticDimension

@@ -25,7 +25,7 @@ class TodoListTableViewCell: UITableViewCell {
         super.layoutSubviews()
 
         contentView.frame = contentView.frame.inset(by: UIEdgeInsets(top: 1, left: 0, bottom: 1, right: 0))
-        contentView.backgroundColor = .systemBrown.withAlphaComponent(0.3)
+        contentView.backgroundColor = .systemPink.withAlphaComponent(0.7)
 
         contentView.addSubview(titleLabel)
         titleLabel.frame = CGRect(x: 10, y: 5, width: contentView.width - 20, height: contentView.height - 10)
