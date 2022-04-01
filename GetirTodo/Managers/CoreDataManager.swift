@@ -16,17 +16,18 @@ protocol CoreDataProtocol {
 }
 
 class CoreDataManager: CoreDataProtocol {
-    
+
     private lazy var context = persistentContainer.viewContext
-    
-    //MARK: - Public
+
+    // MARK: - Public
     func getAllItems(result: @escaping (Result<[TodoItem], CoreDataError>) -> Void) {
         var items = [TodoItem]()
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TodoListItem")
-        do{
+        do {
             let results = try context.fetch(fetchRequest)
             results.forEach { result in
-                let item = createItemFromNSManagedObject(object: result as! NSManagedObject)
+                guard let result = result as? NSManagedObject else {return}
+                let item = createItemFromNSManagedObject(object: result)
                 items.append(item)
             }
             result(.success(items))
@@ -34,31 +35,37 @@ class CoreDataManager: CoreDataProtocol {
             result(.failure(.failedToGetData))
         }
     }
-    
+
     func createNewItem(item: TodoItem, result: @escaping (Result<Bool, CoreDataError>) -> Void) {
         guard let entity = NSEntityDescription.entity(forEntityName: "TodoListItem", in: context) else {
             result(.failure(.failedToCreateNewItem))
             return
         }
-        
+
         let newItem = NSManagedObject(entity: entity, insertInto: context)
-        
+
         newItem.setValue(item.itemId!, forKey: "itemId")
         newItem.setValue(item.title, forKey: "title")
         newItem.setValue(item.detail, forKey: "detail")
         saveContext()
         result(.success(true))
     }
-    
+
     func updateItem(item: TodoItem, result: @escaping (Result<Bool, CoreDataError>) -> Void) {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TodoListItem")
-        do{
+        do {
             let results = try context.fetch(fetchRequest)
-            let itemToUpdate = results.filter { result in
-                guard let id = item.itemId else {return false}
-                return ((result as! NSManagedObject).value(forKey: "itemId") as! UUID) == id
-            }.first as! NSManagedObject
-            
+            guard let itemToUpdate = results.filter({ result in
+                guard let itemId = item.itemId else {return false}
+                guard let result = result as? NSManagedObject,
+                      let id = result.value(forKey: "itemId") as? UUID else {
+                    return false
+                }
+                return id == itemId
+            }).first as? NSManagedObject else {
+                return
+            }
+
             itemToUpdate.setValue(item.title, forKey: "title")
             itemToUpdate.setValue(item.detail, forKey: "detail")
             saveContext()
@@ -67,14 +74,20 @@ class CoreDataManager: CoreDataProtocol {
             result(.failure(.failedToUpdateData))
         }
     }
-    
+
     func deleteItem(itemId: UUID, result: @escaping (Result<Bool, CoreDataError>) -> Void) {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TodoListItem")
         do {
             let results = try context.fetch(fetchRequest)
-            let itemToDelete = results.filter { result in
-                return ((result as! NSManagedObject).value(forKey: "itemId") as! UUID) == itemId
-            }.first as! NSManagedObject
+            guard let itemToDelete = results.filter({ result in
+                guard let result = result as? NSManagedObject,
+                      let id = result.value(forKey: "itemId") as? UUID else {
+                    return false
+                }
+                return id == itemId
+            }).first as? NSManagedObject else {
+                return
+            }
             context.delete(itemToDelete)
             saveContext()
             result(.success(true))
@@ -82,31 +95,30 @@ class CoreDataManager: CoreDataProtocol {
             result(.failure(.failedToDelete))
         }
     }
-    
-    
-    
-    //MARK: - Private
+
+    // MARK: - Private
     private func createItemFromNSManagedObject(object: NSManagedObject) -> TodoItem {
-        let itemId = object.value(forKey: "itemId") as! UUID
-        let title = object.value(forKey: "title") as! String
-        let detail = object.value(forKey: "detail") as! String
-        
+        guard let itemId = object.value(forKey: "itemId") as? UUID,
+              let title = object.value(forKey: "title") as? String,
+              let detail = object.value(forKey: "detail") as? String else {
+            return TodoItem(title: "", detail: "")
+        }
+
         return TodoItem(itemId: itemId, title: title, detail: detail)
     }
-    
+
     private lazy var persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "TodoApp")
-        container.loadPersistentStores(completionHandler: { (storeDescription, error) in
+        container.loadPersistentStores(completionHandler: { (_, error) in
             if let error = error as NSError? {
                 fatalError("Unresolved error \(error), \(error.userInfo)")
             }
         })
         return container
     }()
-    
+
     // MARK: - Core Data Saving support
     private func saveContext () {
-        //let context = persistentContainer.viewContext
         if context.hasChanges {
             do {
                 try context.save()
@@ -117,4 +129,3 @@ class CoreDataManager: CoreDataProtocol {
         }
     }
 }
-
