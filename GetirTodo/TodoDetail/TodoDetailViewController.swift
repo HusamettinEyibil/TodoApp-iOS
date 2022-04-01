@@ -135,13 +135,12 @@ class TodoDetailViewController: UIViewController {
             guard let id = self.itemId else {return}
             self.viewModel.deleteItem(itemId: id)
 
-            let alert = UIAlertController(title: "Success",
-                                          message: "Item deleted successfully",
-                                          preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Go to List Screen", style: .default, handler: { _ in
+            showAlert(title: "Success",
+                      message: "Item deleted successfully",
+                      actionTitle: "Go to List Screen",
+                      target: self) { _ in
                 self.navigationController?.popViewController(animated: true)
-            }))
-            self.present(alert, animated: true)
+            }
         }))
 
         actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel))
@@ -158,12 +157,11 @@ extension TodoDetailViewController: TodoDetailViewModelDelegate {
     }
 
     func didCreateNewItem() {
-        let alert = UIAlertController(title: "Success",
-                                      message: "New item is successfully created.",
-                                      preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
+        showAlert(title: "Success",
+                  message: "New item is successfully created.",
+                  actionTitle: "OK",
+                  target: self) { _ in
             self.navigationController?.popViewController(animated: true)
-        }))
-        present(alert, animated: true)
+        }
     }
 }
